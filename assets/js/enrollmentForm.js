@@ -148,20 +148,6 @@ back4.onclick = function() {
 //    Name/Email Page (page 3) Functionality
 // ==========================================
 
-// event listener that continuously validates the email input
-inputEmail.addEventListener("keypress", function(e) {
-	if (validateEmail(e.target.value)) {
-		exclamationEmail.style.visibility = "hidden";
-		exclamationEmail.style.opacity = "0";
-		errorMsgs[0].style.visibility = "hidden";
-		errorMsgs[0].style.opacity = "0";
-		inputEmail.style.border = "1px solid #00A22C";
-		tickEmail.style.visibility = "visible";
-		tickEmail.style.opacity = "1";
-	}
-	// JAIRU may need to edit this too
-});
-
 // name/email page (page 3) OK button onclick name and email validation
 ok3.onclick = function() {
 	if (inputName.value.trim().length === 0) {
