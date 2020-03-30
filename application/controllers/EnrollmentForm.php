@@ -13,6 +13,22 @@ class EnrollmentForm extends ASPA_Controller
 		$this->load->view('EnrollmentForm');
 	}
 
+	/**
+	 * validate() is called in assets/js/enrollmentForm.js via ajax POST method.
+	 * The functionality is to determine if the inputted email is of the correct:
+	 *  - email format
+	 *  - is an email on the email spreadsheet
+	 */
+	public function validate() {
+		$emailAddress = $this->input->post('emailAddress');
+		$this->load->model('Verification_Model', 'verificationModel');
+		if ($this->verificationModel->is_email_on_sheet($emailAddress)) {
+			$this->create_json('True', '', 'On sheet');
+		} else {
+			$this->create_json('False', '', 'Not on sheet');
+		}
+	}
+
 }
 
 /* End of file EnrollmentForm.php */
