@@ -22,10 +22,14 @@ class EnrollmentForm extends ASPA_Controller
 	public function validate() {
 		$emailAddress = $this->input->post('emailAddress');
 		$this->load->model('Verification_Model', 'verificationModel');
-		if ($this->verificationModel->is_email_on_sheet($emailAddress)) {
-			$this->create_json('True', '', 'On sheet');
+		if ($this->verificationModel->has_user_paid($emailAddress)) {
+			$this->create_json('True', '', 'Success');
 		} else {
-			$this->create_json('False', '', 'Not on sheet');
+			if ($this->verificationModel->is_email_on_sheet($emailAddress)){
+				$this->create_json('False', '', 'Error: signed up but not paid');
+			} else {
+				$this->create_json('False', '', 'Error: not signed up');
+			}
 		}
 	}
 
