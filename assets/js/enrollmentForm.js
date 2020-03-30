@@ -35,6 +35,9 @@ let payAli = document.getElementById("btn-alipay");
 let payCard = document.getElementById("btn-creditcard");
 let payPoli = document.getElementById("btn-poliay");
 
+// Email Address
+let emailAddress = "";
+
 // ==========================================
 //        Setup of Initial state
 // ==========================================
@@ -150,30 +153,46 @@ back4.onclick = function() {
 
 // name/email page (page 3) OK button onclick name and email validation
 ok3.onclick = function() {
+	let emailAddress = inputEmail.value;
 	if (inputName.value.trim().length === 0) {
 		inputName.style.border = "1px solid red";
 		return;
 	} else {
 		inputName.style.border = "1px solid #00A22C";
 	}
-	if (!validateEmail(inputEmail.value)) {
-		exclamationEmail.style.visibility = "visible";
-		errorMsgs[0].style.visibility = "visible";
-		exclamationEmail.style.opacity = "1";
-		errorMsgs[0].style.opacity = "1";
-		inputEmail.style.border = "1px solid red";
-		return;
-	}
-	// JAIRU'S CODE
-	// if (!isEmailInSpreadsheet) {
-	// exclamationEmail.style.visibility = "visible";
-	// errorMsgs[0].style.visibility = "visible";
-	// exclamationEmail.style.opacity = "1";
-	// errorMsgs[0].style.opacity = "1";
-	// inputEmail.style.border = "1px solid red";
-	// 	return;
-	// }
-	nextPage();
+	$.ajax({
+		cache: false,
+		url: "index.php/EnrollmentForm/validate",
+		contentType: "application/json; charset=utf-8",
+		method: "POST",
+		data: { emailAddress: emailAddress },
+		// if the validate() url functions correctly (even if it returns True/False), then success function executes.
+		success: function(data) {
+			console.log("data", data);
+			// data is a JSON object with the following properties:
+			// is_success: True/False (if the email validation succeeeded)
+			// message: any message
+			// extra: any further information
+			if (data.is_success === "True") {
+				tickEmail.style.visibility = "visible";
+				setTimeout(() => nextPage(), 1000);
+			} else {
+				// show the warning message to users
+				exclamationEmail.style.visibility = "visible";
+				errorMsgs[0].style.visibility = "visible";
+				exclamationEmail.style.opacity = "1";
+				errorMsgs[0].style.opacity = "1";
+				inputEmail.style.border = "1px solid red";
+				return;
+			}
+		},
+		// if there is something wrong in the code, the error function executes.
+		error: function(xhr) {
+			alert("Unknown error occurred. Please contact the team.");
+			console.log(xhr);
+			return;
+		}
+	});
 };
 
 // ==========================================
@@ -235,10 +254,4 @@ function findActivePage() {
 // Checks if an element is active (i.e. on the page)
 function isActive(el) {
 	return !(el.offsetParent === null);
-}
-
-// validates the email by checking if the input is in the right format (e.g. johnsmith@example.com)
-function validateEmail(email) {
-	var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-	return re.test(String(email).toLowerCase());
 }
